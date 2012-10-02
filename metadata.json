@@ -1,0 +1,7 @@
+{
+"shell-version": ["3.4.1"], 
+"uuid": "cricketlivescore@rajeshksv37.gmail.com", 
+"name": "Cricket LiveScore",
+"description": "Display Cricket Livescores",
+"url" : "https://github.com/rajeshksv/gnome-shell-extension-cricketlivescore.git"
+}
