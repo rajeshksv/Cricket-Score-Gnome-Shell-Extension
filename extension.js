@@ -103,14 +103,15 @@ cricketScoreButton.prototype = {
 
 
         load_xml_async: function(url, fun) {
-        let here = this;
-        let message = Soup.Message.new('GET', url);
-        _httpSession.queue_message(message, function(session, message) {
-           if (message.status_code !== 200) {
-                global.log("curl failed");
-               return;
-             }
-            fun.call(here,message.response_body.data) ;});
+		let here = this;
+		let message = Soup.Message.new('GET', url);
+		_httpSession.queue_message(message, function(session, message) {
+			if (message.status_code !== 200) {
+				global.log("curl failed");
+				return;
+			}
+			fun.call(here,message.response_body.data) ;
+		});
     	},
 	
 	refreshScore: function(recurse) {
@@ -162,17 +163,17 @@ cricketScoreButton.prototype = {
 					this._moreInfo.get_child().text = moreInfo;
 					this._refreshedDate.get_child().text = refreshedDate;
 				}
-			break;
-		}
+				break;
+			}
 
 	    }
 	    catch(e){
-		global.log('A ' + e.name + ' has occured: ' + e.message);
+			global.log('A ' + e.name + ' has occured: ' + e.message);
 	    }
 	
 	    if(recurse) {
-		this._timeoutS = Mainloop.timeout_add_seconds(3, Lang.bind(this, function() {
-		this.refreshScore(true);}));
+			this._timeoutS = Mainloop.timeout_add_seconds(3, Lang.bind(this, function() {
+			this.refreshScore(true);}));
 	    }});
     	},
 
@@ -183,7 +184,7 @@ cricketScoreButton.prototype = {
 		this._refreshedDate.set_child(new St.Label({ style_class:'moreInfo' , text: _('Loading  Last Refreshed Date...') }));
 	},
 
-	stop : function()
+	stop: function()
 	{
 		if(this._timeoutS)
 		Mainloop.source_remove(this._timeoutS);
