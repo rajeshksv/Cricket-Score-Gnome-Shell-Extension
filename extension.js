@@ -86,7 +86,7 @@ cricketScoreButton.prototype = {
 
 		this.showLoadingUi();
 
-		Mainloop.timeout_add_seconds(10, Lang.bind(this, function() {
+		Mainloop.timeout_add_seconds(3, Lang.bind(this, function() {
 			this.refreshScore(true);
 		}));
 
@@ -174,7 +174,7 @@ cricketScoreButton.prototype = {
 		}
 
 		if(recurse) {
-			this._timeoutS = Mainloop.timeout_add_seconds(3, Lang.bind(this, function() {
+			this._timeoutS = Mainloop.timeout_add_seconds(10, Lang.bind(this, function() {
 			this.refreshScore(true);}));
 		}});
     	},
