@@ -168,15 +168,15 @@ cricketScoreButton.prototype = {
 
 			// end of while loop
 
-	    }
-	    catch(e){
+		}
+		catch(e){
 			global.log('A ' + e.name + ' has occured: ' + e.message);
-	    }
-	
-	    if(recurse) {
+		}
+
+		if(recurse) {
 			this._timeoutS = Mainloop.timeout_add_seconds(3, Lang.bind(this, function() {
 			this.refreshScore(true);}));
-	    }});
+		}});
     	},
 
 
