@@ -87,17 +87,17 @@ cricketScoreButton.prototype = {
 		this.showLoadingUi();
 
 		Mainloop.timeout_add_seconds(10, Lang.bind(this, function() {
-		this.refreshScore(true);
+			this.refreshScore(true);
 		}));
 
 	},
 
 	destroyCurrentInfo: function() {
 		if (this._moreInfo.get_child() != null) {
-		this._moreInfo.get_child().destroy();
+			this._moreInfo.get_child().destroy();
 		}   
 		if(this._refreshedDate.get_child() != null) {
-		this._refreshedDate.get_child().destroy();
+			this._refreshedDate.get_child().destroy();
 		}
 	},
 
@@ -155,7 +155,7 @@ cricketScoreButton.prototype = {
 					let moreInfo = "";
 					let requiredRR = more.@rrr.toString();
 					if(requiredRR != "") { 
-					    let moreInfo = "Required RunRate   : " + requiredRR + "\n\n";
+						let moreInfo = "Required RunRate   : " + requiredRR + "\n\n";
 					}
 					moreInfo  += "Current RunRate   : " + more.@crr.toString();
 					moreInfo += "\n\n" + "Current PrtnrShip : " + more.@cprtshp.toString();
@@ -165,6 +165,8 @@ cricketScoreButton.prototype = {
 				}
 				break;
 			}
+
+			// end of while loop
 
 	    }
 	    catch(e){
