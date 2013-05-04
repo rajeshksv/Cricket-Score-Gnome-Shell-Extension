@@ -65,25 +65,28 @@ cricketScoreButton.prototype = {
     topBox.add_actor(this._scoreInfo);
     this.actor.add_actor(topBox);
 
-    Main.panel._centerBox.add(this.actor, { y_fill: true });
-    Main.panel._menus.addMenu(this.menu);
 
-   let mainBox = new St.BoxLayout({ vertical: true });
+    let children = null;
+    children = Main.panel._centerBox.get_children();
+    Main.panel._centerBox.insert_child_at_index(this.actor, children.length);
+		             
+    if(typeof Main.panel._menus == "undefined")
+	Main.panel.menuManager.addMenu(this.menu);
+    else
+	Main.panel._menus.addMenu(this.menu);
+       
+
    this._moreInfo = new St.Bin();
    this._refreshedDate = new St.Bin();
-   this._separatorArea = new St.DrawingArea({ style_class: 'popup-separator-menu-item' });
-   this._separatorArea.width = 200;
-   this._separatorArea.connect('repaint', Lang.bind(this, this._onSeparatorAreaRepaint));
-   mainBox.add_actor(this._moreInfo);
-   mainBox.add_actor(this._separatorArea);
-   mainBox.add_actor(this._refreshedDate);
-   this.menu.addActor(mainBox);
-
-   this.menu.addActor(this._scoreInfo);
+   
+   this.menu.addActor(this._moreInfo);
+   let item = new PopupMenu.PopupSeparatorMenuItem();
+   this.menu.addMenuItem(item);
+   this.menu.addActor(this._refreshedDate);
 
    this.showLoadingUi();
 
-  Mainloop.timeout_add_seconds(3, Lang.bind(this, function() {
+  Mainloop.timeout_add_seconds(10, Lang.bind(this, function() {
       this.refreshScore(true);
   }));
 
@@ -129,8 +132,9 @@ cricketScoreButton.prototype = {
                           let team1 = oxml.match[i].Tm[0].@sName.toString();
                           let team2 = oxml.match[i].Tm[1].@sName.toString();
                           let status = oxml.match[i].state.@status;
-                          this._scoreInfo.text = team1 + " vs " + team2 + " ( "  + status + "  ) ";
-                          this._moreInfo.get_child().text = "Dont waste your time ! No Live match is going on " ; 
+
+                          this._scoreInfo.text = team1 + " vs " + team2 + " ( Upcoming ) ";
+                          this._moreInfo.get_child().text = "Dont waste your time ! Match " + status; 
                           this._refreshedDate.get_child().text = "  Last Refreshed on   " + currentTime; 
                         } else { 
                                let team1 = oxml.match[i].mscr.btTm.@sName.toString();
@@ -164,7 +168,7 @@ cricketScoreButton.prototype = {
                 global.log('A ' + e.name + ' has occured: ' + e.message);
             }
             if(recurse) {
-                     Mainloop.timeout_add_seconds(3, Lang.bind(this, function() {
+                    this._timeoutS = Mainloop.timeout_add_seconds(3, Lang.bind(this, function() {
                      this.refreshScore(true);
                    }));
            }
@@ -181,26 +185,11 @@ cricketScoreButton.prototype = {
 
     },
 
-        // Copied from Gnome shell's popupMenu.js
-    _onSeparatorAreaRepaint: function(area) {
-        let cr = area.get_context();
-        let themeNode = area.get_theme_node();
-        let [width, height] = area.get_surface_size();
-        let margin = themeNode.get_length('-margin-horizontal');
-        let gradientHeight = themeNode.get_length('-gradient-height');
-        let startColor = themeNode.get_color('-gradient-start');
-        let endColor = themeNode.get_color('-gradient-end');
-
-        let gradientWidth = (width - margin * 2);
-        let gradientOffset = (height - gradientHeight) / 2;
-        let pattern = new Cairo.LinearGradient(margin, gradientOffset, width - margin, gradientOffset + gradientHeight);
-        pattern.addColorStopRGBA(0, startColor.red / 255, startColor.green / 255, startColor.blue / 255, startColor.alpha / 255);
-        pattern.addColorStopRGBA(0.5, endColor.red / 255, endColor.green / 255, endColor.blue / 255, endColor.alpha / 255);
-        pattern.addColorStopRGBA(1, startColor.red / 255, startColor.green / 255, startColor.blue / 255, startColor.alpha / 255);
-        cr.setSource(pattern);
-        cr.rectangle(margin, gradientOffset, gradientWidth, gradientHeight);
-        cr.fill();
-    }
+	stop : function()
+	{
+		if(this._timeoutS)
+		Mainloop.source_remove(this._timeoutS);
+	}
 
 }
 
@@ -214,5 +203,6 @@ function enable() {
 }
 
 function disable() {
+  cricketScore.stop();
   cricketScore.destroy();
 }
