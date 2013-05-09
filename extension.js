@@ -115,6 +115,7 @@ cricketScoreButton.prototype = {
     	},
 	
 	refreshScore: function(recurse) {
+		// Not sure if this API is public or not - hence not releasing this extension officially :(
         	url = "http://synd.cricbuzz.com/j2me/1.0/livematches.xml";
         	this.load_xml_async(url , function(content) {
             	try {
