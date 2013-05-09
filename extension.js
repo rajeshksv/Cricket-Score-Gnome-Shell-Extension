@@ -143,19 +143,22 @@ cricketScoreButton.prototype = {
 					let more = oxml.match[i].mscr.inngsdetail;
 					//let link = oxml.match[i].child("url-link").@href;
 					let scoreText = null;
-					scoreText = team1  +  " - ";
-					scoreText += score1.@r.toString() + " / " ;
-					scoreText += score1.@wkts.toString() + " ( "  + score1.@ovrs.toString() + " )  vs " + team2 ;
+					scoreText = team1  +  "-";
+					scoreText += score1.@r.toString() + "/" ;
+					scoreText += score1.@wkts.toString() + " ("  + score1.@ovrs.toString() + ") vs " + team2 ;
 					this._scoreInfo.text = scoreText;
 					var hasScore= (oxml.match[i].mscr.blgTm.children().length() > 0);
-					if(!hasScore) { 
-						this._scoreInfo.text += " - " + score2.@r.toString() + " / " + score2.@wkts.toString() + " ( "  + score2.@ovrs.toString() + " ) ";
+					if(hasScore) { 
+						//this._scoreInfo.text += "-" + score2.@r.toString() + "/" + score2.@wkts.toString() + "("  + score2.@ovrs.toString() + ")";
+						this._scoreInfo.text += "-" + score2.@r.toString();
 					}       
 
 					let moreInfo = "";
+					let status = oxml.match[i].state.@status;
+					moreInfo = status + "\n\n";
 					let requiredRR = more.@rrr.toString();
 					if(requiredRR != "") { 
-						let moreInfo = "Required RunRate   : " + requiredRR + "\n\n";
+						moreInfo += "Required RunRate   : " + requiredRR + "\n\n";
 					}
 					moreInfo  += "Current RunRate   : " + more.@crr.toString();
 					moreInfo += "\n\n" + "Current PrtnrShip : " + more.@cprtshp.toString();
