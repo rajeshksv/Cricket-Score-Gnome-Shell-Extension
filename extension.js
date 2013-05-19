@@ -139,8 +139,8 @@ cricketScoreButton.prototype = {
 				} else { 
 					let team1 = oxml.match[i].mscr.btTm.@sName.toString();
 					let team2 = oxml.match[i].mscr.blgTm.@sName.toString();
-					let score1 = oxml.match[i].mscr.btTm.Inngs;
-					let score2 = oxml.match[i].mscr.blgTm.Inngs;
+					let score1 = oxml.match[i].mscr.btTm.Inngs[0];
+					let score2 = oxml.match[i].mscr.blgTm.Inngs[0];
 					let more = oxml.match[i].mscr.inngsdetail;
 					//let link = oxml.match[i].child("url-link").@href;
 					let scoreText = null;
@@ -148,8 +148,8 @@ cricketScoreButton.prototype = {
 					scoreText += score1.@r.toString() + "/" ;
 					scoreText += score1.@wkts.toString() + " ("  + score1.@ovrs.toString() + ") vs " + team2 ;
 					this._scoreInfo.text = scoreText;
-					var hasScore= (oxml.match[i].mscr.blgTm.children().length() > 0);
-					if(hasScore) { 
+					//var hasScore= (oxml.match[i].mscr.blgTm.children().length() > 0);
+					if(oxml.match[i].mscr.blgTm.children().length() > 0) { 
 						//this._scoreInfo.text += "-" + score2.@r.toString() + "/" + score2.@wkts.toString() + "("  + score2.@ovrs.toString() + ")";
 						this._scoreInfo.text += "-" + score2.@r.toString();
 					}       
