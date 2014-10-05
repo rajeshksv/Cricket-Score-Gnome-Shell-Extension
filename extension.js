@@ -125,6 +125,7 @@ cricketScoreButton.prototype = {
             	try {
 			// Using custom XML parser as E4X is no longer supported
 			let oxml=new XML.REXML(content.replace('<?xml version="1.0" encoding="utf-8" ?>',''));
+			//log(content);
               		let i=0;
 			while(typeof(oxml.rootElement.childElements[i]) !='undefined') {
 				var d  = new Date();
