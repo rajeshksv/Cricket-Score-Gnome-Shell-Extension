@@ -44,6 +44,8 @@ const Util = imports.misc.util;
 const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+const XML = Me.imports.rexml;
 
 const _httpSession = new Soup.SessionAsync();
 Soup.Session.prototype.add_feature.call(_httpSession, new Soup.ProxyResolverDefault());
@@ -79,10 +81,10 @@ cricketScoreButton.prototype = {
 		this._moreInfo = new St.Bin();
 		this._refreshedDate = new St.Bin();
 
-		this.menu.addActor(this._moreInfo);
+		this.menu.box.add(this._moreInfo);
 		let item = new PopupMenu.PopupSeparatorMenuItem();
 		this.menu.addMenuItem(item);
-		this.menu.addActor(this._refreshedDate);
+		this.menu.box.add(this._refreshedDate);
 
 		this.showLoadingUi();
 
@@ -116,58 +118,74 @@ cricketScoreButton.prototype = {
 	
 	refreshScore: function(recurse) {
 		// Not sure if this API is public or not - hence not releasing this extension officially :(
-        	url = "http://synd.cricbuzz.com/j2me/1.0/livematches.xml";
+        	let url = "http://synd.cricbuzz.com/j2me/1.0/livematches.xml";
+		//let url = "http://localhost/score.xml";
         	this.load_xml_async(url , function(content) {
             	try {
-              		// ECMA Script for XML (E4X)
-             		let oxml  = new XML(content);
-              		i=0;
-              		while(typeof(oxml.match[i]) != 'undefined'){
+			// Using custom XML parser as E4X is no longer supported
+			let oxml=new XML.REXML(content.replace('<?xml version="1.0" encoding="utf-8" ?>',''));
+              		let i=0;
+			while(typeof(oxml.rootElement.childElements[i]) !='undefined') {
 				var d  = new Date();
 				var hrs = (d.getHours() < 10) ? ("0" + d.getHours()) : d.getHours();
 				var min = (d.getMinutes() < 10) ? ("0" + d.getMinutes()) : d.getMinutes();
 				var sec = (d.getSeconds() < 10) ? ("0" + d.getSeconds()) : d.getSeconds();
 				var currentTime = hrs + " : " + min + " : " + sec + " IST ";
-				if(oxml.match[i].state.@mchState == "preview") {
-					  let team1 = oxml.match[i].Tm[0].@sName.toString();
-					  let team2 = oxml.match[i].Tm[1].@sName.toString();
-					  let status = oxml.match[i].state.@status;
+				let matchEntry=oxml.rootElement.childElements[i];
+				if (matchEntry.name == 'match'){
+					if(matchEntry.childElement("state").attribute("mchState") == "preview") {
+						  let j=0;
+						  let team1="NA"; let team2="NA"; let status;
+						  while(typeof(matchEntry.childElements[j])!='undefined'){
+							  let matchEntryChild = matchEntry.childElements[j];
+							  if(matchEntryChild.name == 'state'){
+							  	status = matchEntryChild.attribute("status"); 
+							  } else if(matchEntryChild.name == 'Tm') {
+							  	let team = matchEntryChild.attribute("sName");
+								if(team1 == "NA"){
+									team1 = team;
+								} else {
+									team2 = team;
+								}
+							  }
+							  j++;
+						  }
+						  this._scoreInfo.text = team1 + " vs " + team2 + " ( Upcoming ) ";
+						  this._moreInfo.get_child().text = "Dont waste your time ! Match " + status; 
+						  this._refreshedDate.get_child().text = "  Last Refreshed on   " + currentTime; 
+					} else {
+						let btTeamEntry = matchEntry.childElement("mscr").childElement("btTm");
+						let blgTeamEntry = matchEntry.childElement("mscr").childElement("blgTm");
+						let team1 = btTeamEntry.attribute("sName");
+						let team2 = blgTeamEntry.attribute("sName");
+						let inngs1 = btTeamEntry.childElement("Inngs");
+						let inngs2 = blgTeamEntry.childElement("Inngs");
+						let inngsdetail = matchEntry.childElement("mscr").childElement("inngsdetail");
+						let scoreText = null;
+						scoreText = team1  +  "-" + inngs1.attribute("r") + "/";
+						scoreText += inngs1.attribute("wkts") + " ("  + inngs1.attribute("ovrs") + ")";
+						this._scoreInfo.text = scoreText;
+						scoreText += " vs " + team2;
+						if(blgTeamEntry.childElements.length > 0) { 
+							scoreText += "-" + inngs2.attribute("r");
+						}       
 
-					  this._scoreInfo.text = team1 + " vs " + team2 + " ( Upcoming ) ";
-					  this._moreInfo.get_child().text = "Dont waste your time ! Match " + status; 
-					  this._refreshedDate.get_child().text = "  Last Refreshed on   " + currentTime; 
-				} else { 
-					let team1 = oxml.match[i].mscr.btTm.@sName.toString();
-					let team2 = oxml.match[i].mscr.blgTm.@sName.toString();
-					let score1 = oxml.match[i].mscr.btTm.Inngs[0];
-					let score2 = oxml.match[i].mscr.blgTm.Inngs[0];
-					let more = oxml.match[i].mscr.inngsdetail;
-					//let link = oxml.match[i].child("url-link").@href;
-					let scoreText = null;
-					scoreText = team1  +  "-";
-					scoreText += score1.@r.toString() + "/" ;
-					scoreText += score1.@wkts.toString() + " ("  + score1.@ovrs.toString() + ") vs " + team2 ;
-					this._scoreInfo.text = scoreText;
-					//var hasScore= (oxml.match[i].mscr.blgTm.children().length() > 0);
-					if(oxml.match[i].mscr.blgTm.children().length() > 0) { 
-						//this._scoreInfo.text += "-" + score2.@r.toString() + "/" + score2.@wkts.toString() + "("  + score2.@ovrs.toString() + ")";
-						this._scoreInfo.text += "-" + score2.@r.toString();
-					}       
-
-					let moreInfo = "";
-					let status = oxml.match[i].state.@status;
-					moreInfo = status + "\n\n";
-					let requiredRR = more.@rrr.toString();
-					if(requiredRR != "") { 
-						moreInfo += "Required RunRate   : " + requiredRR + "\n\n";
+						let moreInfo = "";
+						let status = matchEntry.childElement("state").attribute("status");
+						moreInfo = scoreText + "\n\n" + status + "\n\n";
+						let requiredRR = inngsdetail.attribute("rrr");
+						if(requiredRR != "") { 
+							moreInfo += "Required RunRate   : " + requiredRR + "\n\n";
+						}
+						moreInfo  += "Current RunRate   : " + inngsdetail.attribute("crr");
+						moreInfo += "\n\n" + "Current PrtnrShip : " + inngsdetail.attribute("cprtshp");
+						let refreshedDate  =  "Last Refreshed on  " + currentTime;
+						this._moreInfo.get_child().text = moreInfo;
+						this._refreshedDate.get_child().text = refreshedDate;
 					}
-					moreInfo  += "Current RunRate   : " + more.@crr.toString();
-					moreInfo += "\n\n" + "Current PrtnrShip : " + more.@cprtshp.toString();
-					let refreshedDate  =  "Last Refreshed on  " + currentTime;
-					this._moreInfo.get_child().text = moreInfo;
-					this._refreshedDate.get_child().text = refreshedDate;
+					break;
 				}
-				break;
+				i++;
 			}
 
 			// end of while loop
@@ -200,6 +218,7 @@ cricketScoreButton.prototype = {
 
 let cricketScore;
 function init() {
+
 }
 
 function enable() {
