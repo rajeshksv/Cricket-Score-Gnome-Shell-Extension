@@ -12,6 +12,7 @@
  * This file is part of gnome-shell-extension-cricketlivescore
  *
  * Inspired from gnome-shell-extension-weater - https://github.com/ecyrbe/gnome-shell-extension-weather
+ * Also used XML parsing from https://github.com/vrutkovs/gnome-shell-extension-gmail-notify
  *
  * gnome-shell-extension-cricketlivescore is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
