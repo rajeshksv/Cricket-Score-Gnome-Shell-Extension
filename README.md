@@ -1,10 +1,8 @@
-A Gnome Shell extension for displaying cricket scores on top panel - Upgraded to Gnome Shell 3.8
+A Gnome Shell extension for displaying cricket scores on top panel - Upgraded to Gnome Shell 3.12
 
-How to Install this extension ?
+How to Install this extension ? 
 
-Mmmmmm.... Just like any other extension :P Lemme explain anyways.
-
-(It works only in Gnome shell)
+Simple 3 steps.....
 
 1)Download the zip file from here. Open Gnome shell tweak tool.
 
