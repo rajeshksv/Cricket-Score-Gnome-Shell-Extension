@@ -12,7 +12,6 @@
  * This file is part of gnome-shell-extension-cricketlivescore
  *
  * Inspired from gnome-shell-extension-weater - https://github.com/ecyrbe/gnome-shell-extension-weather
- * Also used XML parsing from https://github.com/vrutkovs/gnome-shell-extension-gmail-notify
  *
  * gnome-shell-extension-cricketlivescore is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,7 +124,6 @@ cricketScoreButton.prototype = {
             	try {
 			// Using custom XML parser as E4X is no longer supported
 			let oxml=new XML.REXML(content.replace('<?xml version="1.0" encoding="utf-8" ?>',''));
-			//log(content);
               		let i=0;
 			while(typeof(oxml.rootElement.childElements[i]) !='undefined') {
 				var d  = new Date();
@@ -135,7 +133,8 @@ cricketScoreButton.prototype = {
 				var currentTime = hrs + " : " + min + " : " + sec + " IST ";
 				let matchEntry=oxml.rootElement.childElements[i];
 				if (matchEntry.name == 'match'){
-					if(matchEntry.childElement("state").attribute("mchState") == "preview") {
+					if(matchEntry.childElement("state").attribute("mchState") == "preview" 
+						|| matchEntry.childElement("state").attribute("mchState") == "nextlive") {
 						  let j=0;
 						  let team1="NA"; let team2="NA"; let status;
 						  while(typeof(matchEntry.childElements[j])!='undefined'){
@@ -152,7 +151,7 @@ cricketScoreButton.prototype = {
 							  }
 							  j++;
 						  }
-						  this._scoreInfo.text = team1 + " vs " + team2 + " ( Upcoming ) ";
+						  this._scoreInfo.text = team1 + " vs " + team2;
 						  this._moreInfo.get_child().text = "Dont waste your time ! Match " + status; 
 						  this._refreshedDate.get_child().text = "  Last Refreshed on   " + currentTime; 
 					} else {
