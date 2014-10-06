@@ -1,6 +1,6 @@
 /*
  * 
- * My First Gnome Shell extension . Yayyyyyy :)
+ * My First Gnome Shell extension.
  * 
  * Cricket Live Score Gnome Shell Extension
  *	- Displays live score on top panel
