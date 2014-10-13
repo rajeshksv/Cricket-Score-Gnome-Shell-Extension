@@ -63,7 +63,7 @@ cricketScoreButton.prototype = {
 		PanelMenu.Button.prototype._init.call(this, 0.25);
 
 		let topBox = new St.BoxLayout();
-		this._scoreInfo = new St.Label({ text: _('Loading.....') });
+		this._scoreInfo = new St.Label({y_align: Clutter.ActorAlign.CENTER, text: _('Loading...') });
 		topBox.add_actor(this._scoreInfo);
 		this.actor.add_actor(topBox);
 
