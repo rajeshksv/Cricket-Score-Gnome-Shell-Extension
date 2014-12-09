@@ -110,6 +110,9 @@ cricketScoreButton.prototype = {
 		_httpSession.queue_message(message, function(session, message) {
 			if (message.status_code !== 200) {
 				global.log("curl failed");
+				// Retry when curl fails
+				here._timeoutS = Mainloop.timeout_add_seconds(60, Lang.bind(here, function() {
+				                        here.refreshScore(true);}));
 				return;
 			}
 			fun.call(here,message.response_body.data) ;
@@ -119,6 +122,7 @@ cricketScoreButton.prototype = {
 	refreshScore: function(recurse) {
 		// Not sure if this API is public or not - hence not releasing this extension officially :(
         	let url = "http://synd.cricbuzz.com/j2me/1.0/livematches.xml";
+		global.log("score");
 		//let url = "http://localhost/score.xml";
         	this.load_xml_async(url , function(content) {
             	try {
