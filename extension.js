@@ -25,10 +25,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with gnome-shell-extension-cricketlivescore.  If not, see <http://www.gnu.org/licenses/>
-
- * Known Issues 
- * When network disconnects in between, extension may not work till gnome shell reloads
-
  */
 
 

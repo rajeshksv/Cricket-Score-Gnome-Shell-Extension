@@ -1,4 +1,4 @@
-A Gnome Shell extension for displaying cricket scores on top panel - Upgraded to Gnome Shell 3.20
+A Gnome Shell extension for displaying cricket scores on top panel - Upgraded to Gnome Shell 3.4 - 3.20
 
 How to Install this extension ? 
 
@@ -11,3 +11,5 @@ Simple 3 steps.....
 3)Now Reload gnome shell(Enter alt+f2 and type 'r' and press enter)
 
 Sleep Cricket, Eat Cricket, Drink Cricket :)
+
+TODO: Move to public API - http://live-feeds.cricbuzz.com/CricbuzzFeed?format=xml so that extension can be published in repository ;)
